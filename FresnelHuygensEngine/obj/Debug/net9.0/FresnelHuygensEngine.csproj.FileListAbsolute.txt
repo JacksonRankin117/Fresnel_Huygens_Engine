@@ -12,3 +12,4 @@
 /Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.pdb
 /Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.genruntimeconfig.cache
 /Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/ref/FresnelHuygensEngine.dll
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.sourcelink.json

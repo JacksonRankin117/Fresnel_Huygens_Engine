@@ -1,4 +1,4 @@
-
+using System;
 
 class Vec3
 {
@@ -21,14 +21,16 @@ class Vec3
     public static Vec3 operator *(double scalar, Vec3 v) => v * scalar;
     public static Vec3 operator /(Vec3 v, double scalar) => new Vec3(v.x / scalar, v.y / scalar, v.z / scalar);
 
+    // String output
+    public override string ToString() => $"({x}, {y}, {z})";
 
     // Vector Operations
-    public double Dot(Vec3 other)
+    public double Dot(Vec3 other)  // Returns the dot product of two vectors
     {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    public Vec3 Cross(Vec3 other)
+    public Vec3 Cross(Vec3 other)  // Returns the cross product of two vectors
     {
         double x_comp = y * other.z - z * other.y;
         double y_comp = z * other.x - x * other.z;
@@ -37,14 +39,20 @@ class Vec3
         return new Vec3(x_comp, y_comp, z_comp);
     }
 
-    public double Magnitude()
+    public double Magnitude()  // Returns the magnitude of the vector
     {
         return Math.Sqrt(x * x + y * y + z * z);
     }
 
-    public double Distance(Vec3 other)
+    public double Distance(Vec3 other)  //Returns the distance between two vectors
     {
         return (this - other).Magnitude();
+    }
+
+    public Vec3 Normalize()  // Returns the unit vector
+    {
+        double mag = Magnitude();
+        return this / mag;
     }
 
     

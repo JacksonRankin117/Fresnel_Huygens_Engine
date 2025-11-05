@@ -1,6 +1,6 @@
 class Aperture
 {
-    int width;
-    int height;
+    public int width { get; }
+    public int height { get; }
     
 }
