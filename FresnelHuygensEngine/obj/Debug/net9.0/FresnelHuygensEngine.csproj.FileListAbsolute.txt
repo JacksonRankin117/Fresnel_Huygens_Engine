@@ -1,0 +1,14 @@
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/bin/Debug/net9.0/FresnelHuygensEngine
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/bin/Debug/net9.0/FresnelHuygensEngine.deps.json
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/bin/Debug/net9.0/FresnelHuygensEngine.runtimeconfig.json
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/bin/Debug/net9.0/FresnelHuygensEngine.dll
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/bin/Debug/net9.0/FresnelHuygensEngine.pdb
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.GeneratedMSBuildEditorConfig.editorconfig
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.AssemblyInfoInputs.cache
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.AssemblyInfo.cs
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.csproj.CoreCompileInputs.cache
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.dll
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/refint/FresnelHuygensEngine.dll
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.pdb
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/FresnelHuygensEngine.genruntimeconfig.cache
+/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/obj/Debug/net9.0/ref/FresnelHuygensEngine.dll
