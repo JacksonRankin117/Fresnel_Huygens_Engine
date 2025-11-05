@@ -1,6 +1,6 @@
-class Aperture
+class Aperture : Standard
 {
-    public int width { get; }
-    public int height { get; }
-    
+    public Aperture(float width_cm, float height_cm, int ppcm) : base(width_cm, height_cm, ppcm)
+    {
+    }
 }
