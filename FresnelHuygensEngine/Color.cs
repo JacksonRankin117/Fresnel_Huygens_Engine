@@ -7,7 +7,7 @@ public class Color
     public byte B { get; private set; }
 
     public double Wavelength_nm { get; private set; }
-
+    public double Amplitude { get; private set; }
     public Color(double wavelength_nm, double amplitude = 1.0)
     {
         Wavelength_nm = wavelength_nm;
@@ -43,4 +43,21 @@ public class Color
         double diff = x - mean;
         return Math.Exp(-0.5 * diff * diff / (sigma * sigma));
     }
+
+    public Color Scaled(double amplitude)
+    {
+        // amplitude = sqrt(intensity), so 0–1
+        return new Color(this.Wavelength_nm, amplitude);
+    }
+
+}
+
+public struct Z
+{
+    public double re;
+    public double im;
+    public Z(double r, double i) { re = r; im = i; }
+    public static Z operator +(Z a, Z b) => new(a.re+b.re, a.im+b.im);
+    public static Z operator *(Z a, double s) => new(a.re*s, a.im*s);
+    public static Z Exp(double phase) => new(Math.Cos(phase), Math.Sin(phase));
 }

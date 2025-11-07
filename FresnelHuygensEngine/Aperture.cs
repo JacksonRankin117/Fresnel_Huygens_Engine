@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-class Aperture
+public class Aperture
 {
     public float width_cm { get; }
     public float height_cm { get; }
@@ -61,16 +61,41 @@ class Aperture
         double R2 = R * R;
 
         for (int x = 0; x < pixel_width; x++)
-        for (int y = 0; y < pixel_height; y++)
-        {
-            double dx = x - cx;
-            double dy = y - cy;
+            for (int y = 0; y < pixel_height; y++)
+            {
+                double dx = x - cx;
+                double dy = y - cy;
 
-            if (dx * dx + dy * dy <= R2)
-                rgb_vals[x, y] = color;
-        }
+                if (dx * dx + dy * dy <= R2)
+                    rgb_vals[x, y] = color;
+            }
+    }
+    public Z[,] BuildField()
+    {
+        var field = new Z[pixel_width, pixel_height];
+
+        for (int x = 0; x < pixel_width; x++)
+            for (int y = 0; y < pixel_height; y++)
+            {
+                Color c = rgb_vals[x, y];
+                if (c == null)
+                {
+                    field[x, y] = new Z(0, 0);
+                    continue;
+                }
+
+                // Interpret Color.Amplitude as intensity fraction (0..1)
+                double I = c.Amplitude;
+                double A = Math.Sqrt(I); // field amplitude
+
+                // No phase yet → real and positive
+                field[x, y] = new Z(A, 0);
+            }
+
+        return field;
     }
 
+    public Color GetPixel(int x, int y) => rgb_vals[x, y];
 
     // Output to PPM
     public void PPM_Output(string filename)
