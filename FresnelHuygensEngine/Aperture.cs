@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-class Standard
+class Aperture
 {
     public float width_cm { get; }
     public float height_cm { get; }
@@ -11,7 +11,8 @@ class Standard
 
     private Color[,] rgb_vals;
 
-    public Standard(float width_cm, float height_cm, int ppcm)
+    // Basic Aperture constructor
+    public Aperture(float width_cm, float height_cm, int ppcm)
     {
         this.width_cm = width_cm;
         this.height_cm = height_cm;
@@ -24,7 +25,7 @@ class Standard
     }
 
     // Fill entire aperture with a Color
-    public void FillStandard(Color color)
+    public void FillAperture(Color color)
     {
         for (int x = 0; x < pixel_width; x++)
         for (int y = 0; y < pixel_height; y++)

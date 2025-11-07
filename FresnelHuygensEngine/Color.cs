@@ -8,27 +8,29 @@ public class Color
 
     public double Wavelength_nm { get; private set; }
 
-    public Color(double wavelength_nm)
+    public Color(double wavelength_nm, double amplitude = 1.0)
     {
         Wavelength_nm = wavelength_nm;
-        SetRGBFromWavelength(wavelength_nm);
+        SetRGBFromWavelength(wavelength_nm, amplitude);
     }
 
-    private void SetRGBFromWavelength(double lambda)
+    private void SetRGBFromWavelength(double lambda, double amplitude)
     {
-        // Gaussian parameters: (peak wavelength, standard deviation)
-        // Values chosen to roughly match human perception
-        double r = Gaussian(lambda, 610, 35);  // Red peaks ~610 nm
-        double g = Gaussian(lambda, 550, 30);  // Green peaks ~550 nm
-        double b = Gaussian(lambda, 460, 20);  // Blue peaks ~460 nm
+        double r = Gaussian(lambda, 630, 35);  // Red
+        double g = Gaussian(lambda, 540, 30);  // Green
+        double b = Gaussian(lambda, 460, 20);  // Blue
 
-        // Normalize to 0-255
+        // Normalize as before
         double max = Math.Max(r, Math.Max(g, b));
         if (max > 0)
         {
-            r = r / max * 255.0;
-            g = g / max * 255.0;
-            b = b / max * 255.0;
+            r = r / max * 255.0 * amplitude;
+            g = g / max * 255.0 * amplitude;
+            b = b / max * 255.0 * amplitude;
+        }
+        else
+        {
+            r = g = b = 0;
         }
 
         R = (byte)Math.Clamp(r, 0, 255);
