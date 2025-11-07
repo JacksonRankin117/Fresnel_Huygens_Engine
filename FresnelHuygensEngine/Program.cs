@@ -7,14 +7,15 @@ class Program
     {
         Standard aperture = new Standard(2, 2, 100);
 
-        aperture.FillStandard(0, 0, 0);  // Makes a black aperture
-        aperture.DrawCircle(0, 0, 1, 255, 255, 255);
-        aperture.DrawCircle(0, 0, .9, 255, 0, 255);
-        aperture.DrawCircle(0, 0, .8, 0, 255, 255);
-        aperture.DrawCircle(0, 0, .7, 255, 0, 0);
-        aperture.DrawCircle(0, 0, .6, 0, 0, 255);
-        aperture.DrawCircle(0, 0, .5, 0, 255, 0);
-        aperture.DrawCircle(0, 0, .4, 0, 0, 0);
-        aperture.PPM_Output("../ColorTest.ppm");
+        Color redLight   = new Color(620);
+        Color greenLight = new Color(540);
+        Color blueLight  = new Color(470);
+
+        aperture.FillStandard(new Color(0)); // black
+        aperture.DrawCircle(1.0, redLight);
+        aperture.DrawCircle(0.7, greenLight);
+        aperture.DrawCircle(0.5, blueLight);
+        aperture.PPM_Output("ColorTest.ppm");
+
     }
 }
