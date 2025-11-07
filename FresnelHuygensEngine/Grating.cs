@@ -1,6 +1,6 @@
-class Aperture : Standard
+class Grating : Standard
 {
-    public Aperture(float width_cm, float height_cm, int ppcm) : base(width_cm, height_cm, ppcm)
+    public Grating(float width_cm, float height_cm, int ppcm) : base(width_cm, height_cm, ppcm)
     {
     }
 }

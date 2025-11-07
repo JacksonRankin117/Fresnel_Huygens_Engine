@@ -1,15 +1,17 @@
 using System;
 
-class Color
+public class Color
 {
-    const double e = 2.714;
-    public int[] WavelengthToRGB()
+    public byte R { get; }
+    public byte G { get; }
+    public byte B { get; }
+    public double? Wavelength_nm { get; } // optional, nullable
+
+    public Color(int r, int g, int b, double? wavelength_nm = null)
     {
-        int r=1;
-        int g=2;
-        int b=3;
-
-
-        return new int[3] {r, g, b };
+        R = (byte)r;
+        G = (byte)g;
+        B = (byte)b;
+        Wavelength_nm = wavelength_nm;
     }
 }

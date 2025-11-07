@@ -5,10 +5,16 @@ class Program
 {
     static void Main()
     {
-        Vec3 p1 = new Vec3(1, 2, 3);
-        Vec3 p2 = new Vec3(-1, 2, -3);
+        Standard aperture = new Standard(2, 2, 100);
 
-        Vec3 test = p1.Cross(p2);
-        Console.WriteLine(test.ToString());
+        aperture.FillStandard(0, 0, 0);  // Makes a black aperture
+        aperture.DrawCircle(0, 0, 1, 255, 255, 255);
+        aperture.DrawCircle(0, 0, .9, 255, 0, 255);
+        aperture.DrawCircle(0, 0, .8, 0, 255, 255);
+        aperture.DrawCircle(0, 0, .7, 255, 0, 0);
+        aperture.DrawCircle(0, 0, .6, 0, 0, 255);
+        aperture.DrawCircle(0, 0, .5, 0, 255, 0);
+        aperture.DrawCircle(0, 0, .4, 0, 0, 0);
+        aperture.PPM_Output("../ColorTest.ppm");
     }
 }
