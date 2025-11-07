@@ -51,11 +51,13 @@ class Aperture
     }
 
     // Draw circle centered on image
-    public void DrawCircle(double r0, Color color)
+    public void DrawCircle(double x0_cm, double y0_cm, double r0_cm, Color color)
     {
-        double cx = pixel_width / 2.0;
-        double cy = pixel_height / 2.0;
-        double R = r0 * ppcm;
+        // Convert center from cm → pixel coordinates
+        double cx = (x0_cm + width_cm / 2.0) * ppcm;
+        double cy = (-y0_cm + height_cm / 2.0) * ppcm;
+
+        double R = r0_cm * ppcm;
         double R2 = R * R;
 
         for (int x = 0; x < pixel_width; x++)
@@ -68,6 +70,7 @@ class Aperture
                 rgb_vals[x, y] = color;
         }
     }
+
 
     // Output to PPM
     public void PPM_Output(string filename)
