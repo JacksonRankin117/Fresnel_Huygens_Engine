@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FresnelHuygensEngine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5cd85d4d199ed042abd2001b7c655088ad7728d0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+75ae2d72d29c1c0703822f9d5a8755b7441696ac")]
 [assembly: System.Reflection.AssemblyProductAttribute("FresnelHuygensEngine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FresnelHuygensEngine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

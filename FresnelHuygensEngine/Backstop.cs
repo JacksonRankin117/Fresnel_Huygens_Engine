@@ -5,60 +5,70 @@ using System.Numerics;
 public class Backstop
 {
     private double pixel_size; // meters per pixel
+    private int Nx, Ny;
 
     public Backstop(Aperture aperture)
     {
+        // aperture.ppcm is pixels per cm, so pixel_size = 1 cm / ppcm converted to meters
         pixel_size = 1.0 / aperture.ppcm / 100.0;
+        Nx = aperture.pixel_width;
+        Ny = aperture.pixel_height;
     }
 
-    public Complex[,] FresnelHuygens(Complex[,] apertureField, double dist, double wavelength)
+    // Direct Fresnel–Huygens integral (slow for big Nx,Ny)
+    public Complex[,] FresnelHuygens(Complex[,] apertureField, double z, double wavelength)
     {
-        int W = apertureField.GetLength(0);
-        int H = apertureField.GetLength(1);
-        Complex[,] field = new Complex[W, H];
+        int nx = apertureField.GetLength(0);
+        int ny = apertureField.GetLength(1);
 
-        for (int x2 = 0; x2 < W; x2++)
-            for (int y2 = 0; y2 < H; y2++)
-            {
-                Complex sum = Complex.Zero;
-                for (int x1 = 0; x1 < W; x1++)
-                    for (int y1 = 0; y1 < H; y1++)
-                    {
-                        double dx = (x2 - x1) * pixel_size;
-                        double dy = (y2 - y1) * pixel_size;
-                        double r = Math.Sqrt(dx * dx + dy * dy + dist * dist);
-                        double phase = 2.0 * Math.PI * r / wavelength;
+        double k = 2.0 * Math.PI / wavelength;
+        double dx = pixel_size;
+        double dy = pixel_size;
 
-                        sum += apertureField[x1, y1] * Complex.Exp(Complex.ImaginaryOne * phase) / r;
-                    }
-                field[x2, y2] = sum;
-            }
-        return field;
-    }
+        var outField = new Complex[nx, ny];
 
-    public static double[,] NormalizeIntensity(Complex[,] field)
-    {
-        int W = field.GetLength(0);
-        int H = field.GetLength(1);
-        double[,] intensity = new double[W, H];
-        double maxI = 0;
+        // prefactor = exp(i k z) / (i lambda z)
+        Complex prefactor = Complex.Exp(Complex.ImaginaryOne * k * z) / (new Complex(0, 1) * wavelength * z);
 
-        for (int x = 0; x < W; x++)
-            for (int y = 0; y < H; y++)
-            {
-                double val = field[x, y].Magnitude * field[x, y].Magnitude;
-                intensity[x, y] = val;
-                if (val > maxI) maxI = val;
-            }
+        // coordinates centered
+        double cx = nx / 2.0;
+        double cy = ny / 2.0;
 
-        if (maxI > 0)
+        for (int u = 0; u < nx; u++)
         {
-            for (int x = 0; x < W; x++)
-                for (int y = 0; y < H; y++)
-                    intensity[x, y] /= maxI;
+            double xObs = (u - cx) * dx;
+            for (int v = 0; v < ny; v++)
+            {
+                double yObs = (v - cy) * dy;
+
+                Complex sum = Complex.Zero;
+
+                for (int x = 0; x < nx; x++)
+                {
+                    double xSrc = (x - cx) * dx;
+                    for (int y = 0; y < ny; y++)
+                    {
+                        double ySrc = (y - cy) * dy;
+
+                        // Fresnel approx phase term
+                        double r2 = (xObs - xSrc) * (xObs - xSrc) + (yObs - ySrc) * (yObs - ySrc);
+                        double phase = k * r2 / (2.0 * z);
+                        Complex kernel = Complex.Exp(Complex.ImaginaryOne * phase);
+
+                        sum += apertureField[x, y] * kernel;
+                    }
+                }
+
+                // multiply by prefactor and pixel area
+                outField[u, v] = prefactor * sum * (dx * dy);
+            }
         }
-        return intensity;
+
+        return outField;
     }
+
+    // (Optional) your FFT-based FresnelFFT can remain but must implement FFT2D.
+    // The original FresnelFFT in your code is left here if you want to implement FFT2D later.
 
     public static void PPM_Output(string filename, Color[,] rgb_vals)
     {
@@ -75,9 +85,37 @@ public class Backstop
             for (int x = 0; x < W; x++)
             {
                 Color c = rgb_vals[x, y];
-                writer.Write($"{c.R} {c.G} {c.B} ");
+                if (c == null)
+                    writer.Write("0 0 0 ");
+                else
+                    writer.Write($"{c.R} {c.G} {c.B} ");
             }
             writer.WriteLine();
         }
+    }
+
+    // Normalize intensities to 0..1
+    public static double[,] NormalizeIntensity(Complex[,] field)
+    {
+        int nx = field.GetLength(0);
+        int ny = field.GetLength(1);
+        double[,] I = new double[nx, ny];
+        double max = 0.0;
+
+        for (int x = 0; x < nx; x++)
+            for (int y = 0; y < ny; y++)
+            {
+                double val = field[x, y].Magnitude * field[x, y].Magnitude; // |E|^2
+                I[x, y] = val;
+                if (val > max) max = val;
+            }
+
+        if (max <= 0.0) return I; // all zeros
+
+        for (int x = 0; x < nx; x++)
+            for (int y = 0; y < ny; y++)
+                I[x, y] /= max;
+
+        return I;
     }
 }

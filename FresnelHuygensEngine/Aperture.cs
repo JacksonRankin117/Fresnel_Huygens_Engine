@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Numerics;
 
 public class Aperture
 {
@@ -28,8 +29,8 @@ public class Aperture
     public void FillAperture(Color color)
     {
         for (int x = 0; x < pixel_width; x++)
-        for (int y = 0; y < pixel_height; y++)
-            rgb_vals[x, y] = color;
+            for (int y = 0; y < pixel_height; y++)
+                rgb_vals[x, y] = color;
     }
 
     // Draw rectangle
@@ -46,11 +47,11 @@ public class Aperture
         py_max = Math.Min(pixel_height - 1, py_max);
 
         for (int x = px_min; x <= px_max; x++)
-        for (int y = py_min; y <= py_max; y++)
-            rgb_vals[x, y] = color;
+            for (int y = py_min; y <= py_max; y++)
+                rgb_vals[x, y] = color;
     }
 
-    // Draw circle centered on image
+    // Draw circle centered on image (x0_cm,y0_cm in cm)
     public void DrawCircle(double x0_cm, double y0_cm, double r0_cm, Color color)
     {
         // Convert center from cm → pixel coordinates
@@ -70,9 +71,11 @@ public class Aperture
                     rgb_vals[x, y] = color;
             }
     }
-    public Z[,] BuildField()
+
+    // Build field as Complex[,] (amplitude from Color.Amplitude)
+    public Complex[,] BuildField()
     {
-        var field = new Z[pixel_width, pixel_height];
+        var field = new Complex[pixel_width, pixel_height];
 
         for (int x = 0; x < pixel_width; x++)
             for (int y = 0; y < pixel_height; y++)
@@ -80,16 +83,13 @@ public class Aperture
                 Color c = rgb_vals[x, y];
                 if (c == null)
                 {
-                    field[x, y] = new Z(0, 0);
+                    field[x, y] = Complex.Zero;
                     continue;
                 }
 
-                // Interpret Color.Amplitude as intensity fraction (0..1)
-                double I = c.Amplitude;
-                double A = Math.Sqrt(I); // field amplitude
-
-                // No phase yet → real and positive
-                field[x, y] = new Z(A, 0);
+                // Interpret Color.Amplitude as amplitude (0..1)
+                double A = c.Amplitude;
+                field[x, y] = new Complex(A, 0.0);
             }
 
         return field;
@@ -97,7 +97,7 @@ public class Aperture
 
     public Color GetPixel(int x, int y) => rgb_vals[x, y];
 
-    // Output to PPM
+    // Output to PPM (safe: handles nulls)
     public void PPM_Output(string filename)
     {
         using (var writer = new StreamWriter(filename))
@@ -111,7 +111,10 @@ public class Aperture
                 for (int x = 0; x < pixel_width; x++)
                 {
                     Color c = rgb_vals[x, y];
-                    writer.Write($"{c.R} {c.G} {c.B} ");
+                    if (c == null)
+                        writer.Write("0 0 0 ");
+                    else
+                        writer.Write($"{c.R} {c.G} {c.B} ");
                 }
                 writer.WriteLine();
             }

@@ -8,19 +8,28 @@ public class Color
 
     public double Wavelength_nm { get; private set; }
     public double Amplitude { get; private set; }
+
+    // wavelength_nm: use 0 to indicate "no wavelength / black"
+    // amplitude: 0..1
     public Color(double wavelength_nm, double amplitude = 1.0)
     {
         Wavelength_nm = wavelength_nm;
-        SetRGBFromWavelength(wavelength_nm, amplitude);
+        Amplitude = Math.Clamp(amplitude, 0.0, 1.0);
+        SetRGBFromWavelength(wavelength_nm, Amplitude);
     }
 
     private void SetRGBFromWavelength(double lambda, double amplitude)
     {
+        if (lambda <= 0 || amplitude <= 0)
+        {
+            R = G = B = 0;
+            return;
+        }
+
         double r = Gaussian(lambda, 630, 35);  // Red
         double g = Gaussian(lambda, 540, 30);  // Green
         double b = Gaussian(lambda, 460, 20);  // Blue
 
-        // Normalize as before
         double max = Math.Max(r, Math.Max(g, b));
         if (max > 0)
         {
@@ -33,9 +42,9 @@ public class Color
             r = g = b = 0;
         }
 
-        R = (byte)Math.Clamp(r, 0, 255);
-        G = (byte)Math.Clamp(g, 0, 255);
-        B = (byte)Math.Clamp(b, 0, 255);
+        R = (byte)Math.Clamp((int)Math.Round(r), 0, 255);
+        G = (byte)Math.Clamp((int)Math.Round(g), 0, 255);
+        B = (byte)Math.Clamp((int)Math.Round(b), 0, 255);
     }
 
     private double Gaussian(double x, double mean, double sigma)
@@ -46,18 +55,6 @@ public class Color
 
     public Color Scaled(double amplitude)
     {
-        // amplitude = sqrt(intensity), so 0–1
         return new Color(this.Wavelength_nm, amplitude);
     }
-
-}
-
-public struct Z
-{
-    public double re;
-    public double im;
-    public Z(double r, double i) { re = r; im = i; }
-    public static Z operator +(Z a, Z b) => new(a.re+b.re, a.im+b.im);
-    public static Z operator *(Z a, double s) => new(a.re*s, a.im*s);
-    public static Z Exp(double phase) => new(Math.Cos(phase), Math.Sin(phase));
 }
