@@ -15,7 +15,30 @@ public class Backstop
         Ny = aperture.pixel_height;
     }
 
-    // Direct Fresnel–Huygens integral (slow for big Nx,Ny)
+    public Complex[,] ExpandAperture(Complex[,] field, int multiple_width, int multiple_height)
+    {
+        int nx = field.GetLength(0);
+        int ny = field.GetLength(1);
+        int newNx = nx * multiple_width;
+        int newNy = ny * multiple_height;
+
+        Ny = newNy;
+        Ny = newNy;
+
+        var expanded = new Complex[newNx, newNy];
+
+        int offsetX = (newNx - nx) / 2;
+        int offsetY = (newNy - ny) / 2;
+
+        for (int x = 0; x < nx; x++)
+            for (int y = 0; y < ny; y++)
+                expanded[x + offsetX, y + offsetY] = field[x, y];
+
+        return expanded;
+    }
+
+
+    // Direct Fresnel–Huygens integral
     public Complex[,] FresnelHuygens(Complex[,] apertureField, double z, double wavelength)
     {
         int nx = apertureField.GetLength(0);
@@ -27,7 +50,7 @@ public class Backstop
 
         var outField = new Complex[nx, ny];
 
-        // prefactor = exp(i k z) / (i lambda z)
+        // Prefactor = exp(i k z) / (i lambda z)
         Complex prefactor = Complex.Exp(Complex.ImaginaryOne * k * z) / (new Complex(0, 1) * wavelength * z);
 
         // coordinates centered
@@ -67,9 +90,6 @@ public class Backstop
         return outField;
     }
 
-    // (Optional) your FFT-based FresnelFFT can remain but must implement FFT2D.
-    // The original FresnelFFT in your code is left here if you want to implement FFT2D later.
-
     public static void PPM_Output(string filename, Color[,] rgb_vals)
     {
         int W = rgb_vals.GetLength(0);
@@ -94,7 +114,7 @@ public class Backstop
         }
     }
 
-    // Normalize intensities to 0..1
+    // Normalize intensities on a scale from 0 to 1
     public static double[,] NormalizeIntensity(Complex[,] field)
     {
         int nx = field.GetLength(0);
@@ -105,12 +125,12 @@ public class Backstop
         for (int x = 0; x < nx; x++)
             for (int y = 0; y < ny; y++)
             {
-                double val = field[x, y].Magnitude * field[x, y].Magnitude; // |E|^2
+                double val = field[x, y].Magnitude * field[x, y].Magnitude; // This is actually |E|^2
                 I[x, y] = val;
                 if (val > max) max = val;
             }
 
-        if (max <= 0.0) return I; // all zeros
+        if (max <= 0.0) return I;
 
         for (int x = 0; x < nx; x++)
             for (int y = 0; y < ny; y++)

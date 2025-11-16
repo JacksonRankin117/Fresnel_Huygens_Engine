@@ -9,8 +9,6 @@ public class Color
     public double Wavelength_nm { get; private set; }
     public double Amplitude { get; private set; }
 
-    // wavelength_nm: use 0 to indicate "no wavelength / black"
-    // amplitude: 0..1
     public Color(double wavelength_nm, double amplitude = 1.0)
     {
         Wavelength_nm = wavelength_nm;

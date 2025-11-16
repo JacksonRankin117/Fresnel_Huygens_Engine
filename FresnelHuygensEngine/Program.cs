@@ -5,11 +5,20 @@ class Program
 {
     static void Main()
     {
-        Aperture aperture = new Aperture(0.1f, 0.1f, 400);
-        aperture.FillAperture(new Color(0, 0));  // black background
-        aperture.DrawCircle(0, 0, 0.5, new Color(400, 0.001));
+        Aperture aperture = new Aperture(1f, 1f, 100);
+        double wavelength_m = 650e-9;   // physics wavelength in meters
+        double wavelength_nm = 650e-9;   // for Color mapping (nm)
 
-        // Convert to complex field (using wavelength presence as mask)
+        aperture.FillAperture(new Color(0, 0));  // black background
+
+        // Double slit
+        // aperture.DrawRectangle(-0.1, -0.09, -0.3, 0.3, new Color(wavelength_nm, 1f));
+        // aperture.DrawRectangle(0.09, 0.1, -0.3, 0.3, new Color(wavelength_nm, 1f));
+        
+        // Circle
+        aperture.DrawCircle(0, 0, 0.2, new Color(wavelength_nm, 1f));
+
+        // Convert to complex field
         Complex[,] apertureField = new Complex[aperture.pixel_width, aperture.pixel_height];
         for (int x = 0; x < aperture.pixel_width; x++)
         for (int y = 0; y < aperture.pixel_height; y++)
@@ -20,27 +29,36 @@ class Program
         }
 
         Backstop backstop = new Backstop(aperture);
-        double wavelength_m = 400e-9;   // physics wavelength in meters
-        double wavelength_nm = 400.0;   // for Color mapping (nm)
-        double distance = 10;         // 10 cm observation plane (adjust as needed)
 
-        // Use direct Fresnel-Huygens (slow for large arrays). For bigger arrays, switch to FFT-based implementation.
-        var field = backstop.FresnelHuygens(apertureField, distance, wavelength_m);
-        var intensity = Backstop.NormalizeIntensity(field); // normalized 0..1
+        int multiple_width = 4;
+        int multiple_height = 4;
 
-        // Map intensity back to RGB using the wavelength in nm
-        Color[,] rgbPattern = new Color[aperture.pixel_width, aperture.pixel_height];
-        for (int x = 0; x < aperture.pixel_width; x++)
-        for (int y = 0; y < aperture.pixel_height; y++)
+        // expanded aperture field
+        var expandedAperture = backstop.ExpandAperture(apertureField, multiple_width, multiple_height);
+
+        double distance = 5; // meters
+
+        // Fresnel propagation on expanded aperture
+        var field = backstop.FresnelHuygens(expandedAperture, distance, wavelength_m);
+        var intensity = Backstop.NormalizeIntensity(field); // 0..1
+
+        int Nx = intensity.GetLength(0);
+        int Ny = intensity.GetLength(1);
+
+        // RGB output grid matches expanded size
+        Color[,] rgbPattern = new Color[Nx, Ny];
+
+        for (int x = 0; x < Nx; x++)
+        for (int y = 0; y < Ny; y++)
         {
-            double amp = Math.Sqrt(intensity[x, y]); // amplitude = sqrt(intensity)
+            double amp = Math.Sqrt(intensity[x, y]);
             rgbPattern[x, y] = new Color(wavelength_nm, amp);
         }
 
-        // Write the original aperture and diffraction pattern
-        aperture.PPM_Output("/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/Output/Aperture.ppm");
-        Backstop.PPM_Output("/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/Output/Diffraction.ppm", rgbPattern);
+        // Write results
+        aperture.PPM_Output("/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/Output/Test_Aperture_Circle.ppm");
+        Backstop.PPM_Output("/Users/jackson.rankin/Developer/Fresnel_Huygens_Engine/FresnelHuygensEngine/Output/Test_Pattern_Circle.ppm", rgbPattern);
 
-        Console.WriteLine("Done. Wrote Aperture.ppm and Diffraction.ppm");
+        Console.WriteLine("Done");
     }
 }

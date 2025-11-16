@@ -38,8 +38,8 @@ public class Aperture
     {
         int px_min = (int)((x_min + width_cm / 2) * ppcm);
         int px_max = (int)((x_max + width_cm / 2) * ppcm);
-        int py_min = (int)((y_min + height_cm / 2) * ppcm);
-        int py_max = (int)((y_max + height_cm / 2) * ppcm);
+        int py_min = (int)((height_cm / 2 - y_max) * ppcm);
+        int py_max = (int)((height_cm / 2 - y_min) * ppcm);
 
         px_min = Math.Max(0, px_min);
         px_max = Math.Min(pixel_width - 1, px_max);
@@ -51,10 +51,10 @@ public class Aperture
                 rgb_vals[x, y] = color;
     }
 
-    // Draw circle centered on image (x0_cm,y0_cm in cm)
+    // Draw circle centered on image
     public void DrawCircle(double x0_cm, double y0_cm, double r0_cm, Color color)
     {
-        // Convert center from cm → pixel coordinates
+        // Convert center from cm to pixel coordinates
         double cx = (x0_cm + width_cm / 2.0) * ppcm;
         double cy = (-y0_cm + height_cm / 2.0) * ppcm;
 
@@ -72,7 +72,7 @@ public class Aperture
             }
     }
 
-    // Build field as Complex[,] (amplitude from Color.Amplitude)
+    // Build field as Complex[,]
     public Complex[,] BuildField()
     {
         var field = new Complex[pixel_width, pixel_height];
@@ -87,7 +87,7 @@ public class Aperture
                     continue;
                 }
 
-                // Interpret Color.Amplitude as amplitude (0..1)
+                // Interpret Color.Amplitude as amplitude (scale from 0 to 1)
                 double A = c.Amplitude;
                 field[x, y] = new Complex(A, 0.0);
             }
@@ -97,7 +97,7 @@ public class Aperture
 
     public Color GetPixel(int x, int y) => rgb_vals[x, y];
 
-    // Output to PPM (safe: handles nulls)
+    // Output to PPM
     public void PPM_Output(string filename)
     {
         using (var writer = new StreamWriter(filename))
